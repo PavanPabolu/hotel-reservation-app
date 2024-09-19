@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder,FormGroup,Validators } from '@angular/forms';
 import { ReservationService } from '../reservation/reservation.service';
 import { Reservation } from '../models/reservation';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-reservation-form',
@@ -16,8 +16,10 @@ export class ReservationFormComponent implements OnInit{
   //Angular DI will inject the instances for formbuilder object when an instance created for  this componenet class.
   constructor(
     private formBuilder : FormBuilder,
-    private reservationService : ReservationService,
-    private router : Router ){ //Angular DI is injecting the Reservationservice
+    private reservationService : ReservationService, //Angular DI is injecting the Reservationservice
+    private router : Router,                    //for redirection, on add record.
+    private activatedRoute : ActivatedRoute     //for url querystring parameters
+      ){ 
   }
 
   //ngOnInit is a lifecycle hook in angular
@@ -30,17 +32,37 @@ export class ReservationFormComponent implements OnInit{
         guestEmail : ['', [Validators.required, Validators.email]],
         roomNumber : ['', Validators.required]
     });
+
+    //to get the id from the url querystring
+    let id = this.activatedRoute.snapshot.paramMap.get('id');
+    if(id){
+      let reservation = this.reservationService.getReservation(id);
+      
+      if(reservation)
+        this.reservationForm.patchValue(reservation); //patch the values means read values from object fill into the form
+    }
   }
 
 
   onSubmit() : void {
-    console.log(1);
+
     if(this.reservationForm.valid){
       console.log("valid.!");
 
       //This component has only UI-related and no business logic, instead consuming the service for business logic.
       let reservation : Reservation = this.reservationForm.value; //taking directly from the reservationform property
-      this.reservationService.addReservation(reservation);
+
+      let id = this.activatedRoute.snapshot.paramMap.get('id');
+      if(id){
+        //update
+        // reservation.id = id; // as the property "id" is not available in the reservation form page. but it is less safe that exposing the id in the page
+        // this.reservationService.updateReservation(reservation);
+        this.reservationService.updateReservation(id, reservation);
+      }
+      else {
+        //new
+        this.reservationService.addReservation(reservation);
+      }
 
       //navigate to list page, on operation success.
       this.router.navigate(['/list']);
