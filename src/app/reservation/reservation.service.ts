@@ -28,6 +28,10 @@ export class ReservationService {
   }
 
   addReservation(reservation : Reservation):void {
+
+    //id should not be created by the user which creates by the db server. but here the case is, we are using localstorage for demo purpose.
+    reservation.id = Date.now().toString(); 
+
     this.reservations.push(reservation);
     console.log(this.reservations);
 
