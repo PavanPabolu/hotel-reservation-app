@@ -20,6 +20,7 @@ export class ReservationFormComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    //Form fields validation @typescript class
     this.reservationForm = this.formBuilder.group({
         checkInDate : ['', Validators.required],
         checkOutDate : ['', Validators.required],
@@ -35,6 +36,7 @@ export class ReservationFormComponent implements OnInit{
     if(this.reservationForm.valid){
       console.log("valid.!");
 
+      //This component has only UI-related and no business logic, instead consuming the service for business logic.
       let reservation : Reservation = this.reservationForm.value; //taking directly from the reservationform property
       this.reservationService.addReservation(reservation);
     }
