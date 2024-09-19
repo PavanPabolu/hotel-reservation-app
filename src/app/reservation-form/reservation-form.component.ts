@@ -19,7 +19,8 @@ export class ReservationFormComponent implements OnInit{
 
   }
 
-  ngOnInit(): void {
+  //ngOnInit is a lifecycle hook in angular
+  ngOnInit(): void {  
     //Form fields validation @typescript class
     this.reservationForm = this.formBuilder.group({
         checkInDate : ['', Validators.required],
