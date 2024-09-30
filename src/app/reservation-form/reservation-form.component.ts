@@ -36,10 +36,15 @@ export class ReservationFormComponent implements OnInit{
     //to get the id from the url querystring
     let id = this.activatedRoute.snapshot.paramMap.get('id');
     if(id){
-      let reservation = this.reservationService.getReservation(id);
-      
-      if(reservation)
+      //let reservation = this.reservationService.getReservation(id);
+      this.reservationService.getReservation(id).subscribe(reservation => {
+        if(reservation)
+          this.reservationForm.patchValue(reservation); //patch the values means read values from object fill into the form
+      });
+
+      /*if(reservation)
         this.reservationForm.patchValue(reservation); //patch the values means read values from object fill into the form
+      */
     }
   }
 
@@ -57,11 +62,18 @@ export class ReservationFormComponent implements OnInit{
         //update
         // reservation.id = id; // as the property "id" is not available in the reservation form page. but it is less safe that exposing the id in the page
         // this.reservationService.updateReservation(reservation);
-        this.reservationService.updateReservation(id, reservation);
+        
+        /*this.reservationService.updateReservation(id, reservation);*/
+        this.reservationService.updateReservation(id, reservation).subscribe(() => {
+          console.log("Update request proecessed.");
+        });
       }
       else {
         //new
-        this.reservationService.addReservation(reservation);
+        //this.reservationService.addReservation(reservation);
+        this.reservationService.addReservation(reservation).subscribe(() => {
+          console.log("Add request proecessed.");
+        });
       }
 
       //navigate to list page, on operation success.
